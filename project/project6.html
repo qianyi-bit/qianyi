@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目详情 - 机器学习预测应用</title>
+    <!-- 加载 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- 简易导航栏 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">项目详情</h1>
+            <a href="/index.html?page=portfolio" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">&larr; 返回作品集</a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+            <img src="https://placehold.co/600x400/ff9900/ffffff?text=ML预测" alt="机器学习预测" class="w-full h-auto object-cover max-h-96">
+            <div class="p-8 md:p-12">
+                <p class="text-blue-600 font-semibold mb-2">Machine Learning</p>
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-6">项目六：机器学习预测应用</h2>
+                
+                <!-- 详细内容（五段） -->
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>这是一个基于机器学习的房价预测应用，使用历史数据训练模型，提供实时预测功能。</p>
+                    <p>前端使用 React.js 构建交互界面，后端采用 Flask 框架处理模型推理。</p>
+                    <p>模型训练使用了 Scikit-learn 库，包括线性回归和随机森林算法，并通过 GridSearch 优化超参数。</p>
+                    <p>应用支持用户上传自定义数据集进行预测，并可视化结果以图表形式展示。</p>
+                    <p>部署在 Heroku 上，确保可扩展性和易访问性。</p>
+                </div>
+                <!-- --- 新增内容开始 --- -->
+                
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">技术栈详情</h3>
+                <ul class="list-disc list-inside space-y-2 text-lg text-gray-700 leading-relaxed">
+                    <li><span class="font-semibold">框架:</span> Flask + React.js</li>
+                    <li><span class="font-semibold">ML库:</span> Scikit-learn</li>
+                    <li><span class="font-semibold">可视化:</span> Chart.js</li>
+                    <li><span class="font-semibold">部署:</span> Heroku</li>
+                    <li><span class="font-semibold">数据处理:</span> Pandas</li>
+                </ul>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">项目挑战与解决方案</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p><strong class="text-gray-900">挑战:</strong> 处理不均衡数据集和过拟合问题。</p>
+                    <p><strong class="text-gray-900">解决方案:</strong> 应用 SMOTE 过采样技术和交叉验证。</p>
+                </div>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">成果与反思</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>模型准确率达 85%，用户反馈积极。这让我更深入理解 ML 管道。</p>
+                </div>
+                <!-- --- 新增内容结束 --- -->
+            </div>
+        </div>
+    </main>
+
+<footer class="bg-gray-800 text-gray-300 py-8 mt-12">
+    <div class="container mx-auto px-6 text-center">
+        <p>&copy; <span id="year"></span> 我的作品集网站. 保留所有权利.</p>
+    </div>
+</footer>
+
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目详情 - 移动应用</title>
+    <!-- 加载 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- 简易导航栏 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">项目详情</h1>
+            <a href="/index.html?page=portfolio" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">&larr; 返回作品集</a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+            <img src="https://placehold.co/600x400/2ecc71/ffffff?text=移动应用" alt="移动应用" class="w-full h-auto object-cover max-h-96">
+            <div class="p-8 md:p-12">
+                <p class="text-blue-600 font-semibold mb-2">Mobile Development</p>
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-6">项目二：移动应用</h2>
+                
+                <!-- 详细内容（五段） -->
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>这是一款使用 React Native 开发的跨平台任务管理应用，支持 iOS 和 Android。它通过统一的代码库实现了原生级的性能体验。</p>
+                    <p>应用的核心功能包括任务创建、编辑、分类、设置提醒和进度跟踪。界面设计简洁直观，遵循原生平台的设计指南。</p>
+                    <p>后端使用 Google Firebase 提供的 Firestore 实时数据库进行数据存储和同步，确保用户在不同设备间的数据一致性。</p>
+                    <p>我们实施了离线优先的策略，允许用户在没有网络连接时也能操作任务，待网络恢复时自动同步数据，极大地提升了用户体验。</p>
+                    <p>项目专注于高效的项目管理，提供日历视图和甘特图（模拟）功能，帮助用户可视化地规划和跟踪大型项目，提升工作效率。</p>
+                </div>
+                <!-- --- 新增内容开始 --- -->
+                
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">技术栈详情</h3>
+                <ul class="list-disc list-inside space-y-2 text-lg text-gray-700 leading-relaxed">
+                    <li><span class="font-semibold">框架:</span> React Native</li>
+                    <li><span class="font-semibold">后端:</span> Google Firebase</li>
+                    <li><span class="font-semibold">数据库:</span> Firestore</li>
+                    <li><span class="font-semibold">状态管理:</span> Redux</li>
+                    <li><span class="font-semibold">推送通知:</span> Firebase Cloud Messaging</li>
+                </ul>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">项目挑战与解决方案</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p><strong class="text-gray-900">挑战:</strong> 跨平台 UI 一致性和性能优化。</p>
+                    <p><strong class="text-gray-900">解决方案:</strong> 使用 NativeBase 组件库，并优化渲染循环以减少不必要的重绘。</p>
+                </div>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">成果与反思</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>应用下载量超过 5000，用户反馈平均分 4.5/5。这项目强化了我对移动开发的理解。</p>
+                </div>
+                <!-- --- 新增内容结束 --- -->
+
+            </div>
+        </div>
+    </main>
+
+<footer class="bg-gray-800 text-gray-300 py-8 mt-12">
+    <div class="container mx-auto px-6 text-center">
+        <p>&copy; <span id="year"></span> 我的作品集网站. 保留所有权利.</p>
+    </div>
+</footer>
+
+<!-- 动态设置年份的JS -->
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

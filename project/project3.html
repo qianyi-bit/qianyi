@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目详情 - 数据可视化</title>
+    <!-- 加载 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- 简易导航栏 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">项目详情</h1>
+            <a href="/index.html?page=portfolio" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">&larr; 返回作品集</a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+            <img src="https://placehold.co/600x400/e74c3c/ffffff?text=数据可视化" alt="数据可视化" class="w-full h-auto object-cover max-h-96">
+            <div class="p-8 md:p-12">
+                <p class="text-blue-600 font-semibold mb-2">Data & Analytics</p>
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-6">项目三：数据可视化</h2>
+                
+                <!-- 详细内容（五段） -->
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>该项目是一个交互式数据仪表板，专门用于展示和分析复杂的全球销售数据。目的是将原始数据转化为可理解的视觉信息。</p>
+                    <p>我们利用强大的 D3.js 库来创建自定义、高性能的数据图表，包括桑基图、力导向图和地理空间图，以揭示销售趋势和瓶颈。</p>
+                    <p>仪表板提供了丰富的筛选和缩放功能，用户可以根据时间、地区或产品线进行深度钻取，实现多维度的数据探索。</p>
+                    <p>所有可视化都针对响应式设计进行了优化，确保在从移动设备到大型桌面显示器上的清晰展示和流畅交互。</p>
+                    <p>数据处理管道使用了 Python Pandas 进行清洗和预处理，并以轻量级的 JSON 格式提供给前端，保证了极快的加载速度和渲染效率。</p>
+                </div>
+                <!-- --- 新增内容开始 --- -->
+                
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">技术栈详情</h3>
+                <ul class="list-disc list-inside space-y-2 text-lg text-gray-700 leading-relaxed">
+                    <li><span class="font-semibold">可视化:</span> D3.js</li>
+                    <li><span class="font-semibold">数据处理:</span> Python Pandas</li>
+                    <li><span class="font-semibold">前端框架:</span> React.js</li>
+                    <li><span class="font-semibold">后端:</span> Flask</li>
+                    <li><span class="font-semibold">部署:</span> Heroku</li>
+                </ul>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">项目挑战与解决方案</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p><strong class="text-gray-900">挑战:</strong> 处理海量数据而不牺牲交互速度。</p>
+                    <p><strong class="text-gray-900">解决方案:</strong> 实施数据聚合和 Web Workers 进行后台计算。</p>
+                </div>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">成果与反思</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>仪表板帮助公司决策时间缩短 30%。这让我更注重数据可视化的用户体验。</p>
+                </div>
+                <!-- --- 新增内容结束 --- -->
+
+            </div>
+        </div>
+    </main>
+
+    <!-- 简易页脚 -->
+
+<footer class="bg-gray-800 text-gray-300 py-8 mt-12">
+    <div class="container mx-auto px-6 text-center">
+        <p>&copy; <span id="year"></span> 我的作品集网站. 保留所有权利.</p>
+    </div>
+</footer>
+
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

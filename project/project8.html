@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目详情 - 区块链投票系统</title>
+    <!-- 加载 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- 简易导航栏 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">项目详情</h1>
+            <a href="/index.html?page=portfolio" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">&larr; 返回作品集</a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+            <img src="https://placehold.co/600x400/4b0082/ffffff?text=区块链投票" alt="区块链投票系统" class="w-full h-auto object-cover max-h-96">
+            <div class="p-8 md:p-12">
+                <p class="text-blue-600 font-semibold mb-2">Blockchain Development</p>
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-6">项目八：区块链投票系统</h2>
+                
+                <!-- 详细内容（五段） -->
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>这是一个去中心化的投票系统 DApp，基于 Ethereum 区块链构建，旨在提供透明、安全的投票过程，防止篡改和重复投票。</p>
+                    <p>智能合约使用 Solidity 编写，处理投票逻辑、候选人管理和结果统计。前端使用 React.js 和 Web3.js 与区块链交互。</p>
+                    <p>系统支持用户通过 MetaMask 钱包连接，进行匿名投票，并实时查看结果。使用 Chainlink 预言机引入外部数据以验证用户资格。</p>
+                    <p>部署在 Ropsten 测试网上，确保在生产环境前的充分测试。包括管理员面板用于启动新投票和监控过程。</p>
+                    <p>项目强调区块链的不可变性和去中心化特性，适用于选举、调查或社区决策或场景。</p>
+                </div>
+                <!-- --- 新增内容开始 --- -->
+                
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">技术栈详情</h3>
+                <ul class="list-disc list-inside space-y-2 text-lg text-gray-700 leading-relaxed">
+                    <li><span class="font-semibold">区块链:</span> Ethereum</li>
+                    <li><span class="font-semibold">智能合约:</span> Solidity</li>
+                    <li><span class="font-semibold">前端:</span> React.js + Web3.js</li>
+                    <li><span class="font-semibold">开发工具:</span> Truffle / Hardhat</li>
+                    <li><span class="font-semibold">预言机:</span> Chainlink</li>
+                </ul>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">项目挑战与解决方案</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p><strong class="text-gray-900">挑战:</strong> 确保投票隐私同时防止 Sybil 攻击（假账户泛滥）。</p>
+                    <p><strong class="text-gray-900">解决方案:</strong> 集成零知识证明 (ZK-SNARKs) 以验证用户资格，而不透露身份；使用代币或 NFT 作为投票凭证。</p>
+                </div>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">成果与反思</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>系统在测试中处理了 1000+ 模拟投票，无篡改事件。项目上线后，用户反馈强调其在透明选举中的潜力。这让我深入理解了区块链的安全性和 gas 优化。</p>
+                </div>
+                <!-- --- 新增内容结束 --- -->
+            </div>
+        </div>
+    </main>
+
+<footer class="bg-gray-800 text-gray-300 py-8 mt-12">
+    <div class="container mx-auto px-6 text-center">
+        <p>&copy; <span id="year"></span> 我的作品集网站. 保留所有权利.</p>
+    </div>
+</footer>
+
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目详情 - 个人博客</title>
+    <!-- 加载 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- 简易导航栏 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">项目详情</h1>
+            <a href="/index.html?page=portfolio" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">&larr; 返回作品集</a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+            <img src="https://placehold.co/600x400/f39c12/ffffff?text=个人博客" alt="个人博客" class="w-full h-auto object-cover max-h-96">
+            <div class="p-8 md:p-12">
+                <p class="text-blue-600 font-semibold mb-2">Web Development</p>
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-6">项目四：个人博客</h2>
+                
+                <!-- 详细内容（五段） -->
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>这是一个从零开始构建的个人博客平台，旨在提供一个快速、安全且易于维护的内容发布环境。</p>
+                    <p>后端使用原生 PHP 结合 MVC 设计模式进行开发，保证了代码的整洁和可维护性。数据存储则依赖于稳定的 MySQL 数据库。</p>
+                    <p>我们实现了完整的内容管理系统 (CMS)，包括文章发布、编辑、标签分类、评论审核以及用户权限管理等功能。</p>
+                    <p>为了提升加载速度和 SEO 表现，我们集成了缓存机制，并确保所有页面都遵循 W3C 标准和移动优先的原则。</p>
+                    <p>博客支持用户注册和登录功能，并使用了安全的密码散列算法和 CSRF 保护，以防止常见的 Web 攻击，保障平台安全。</p>
+                </div>
+                <!-- --- 新增内容开始 --- -->
+                
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">技术栈详情</h3>
+                <ul class="list-disc list-inside space-y-2 text-lg text-gray-700 leading-relaxed">
+                    <li><span class="font-semibold">后端:</span> 原生 PHP (MVC)</li>
+                    <li><span class="font-semibold">数据库:</span> MySQL</li>
+                    <li><span class="font-semibold">前端:</span> Bootstrap</li>
+                    <li><span class="font-semibold">缓存:</span> Memcached</li>
+                    <li><span class="font-semibold">安全:</span> CSRF 保护</li>
+                </ul>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">项目挑战与解决方案</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p><strong class="text-gray-900">挑战:</strong> 防止 SQL 注入和 XSS 攻击。</p>
+                    <p><strong class="text-gray-900">解决方案:</strong> 使用 PDO 预处理语句和输入过滤。</p>
+                </div>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">成果与反思</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>博客每月访问量 10k+，SEO 排名提升。这强化了我的后端安全知识。</p>
+                </div>
+                <!-- --- 新增内容结束 --- -->
+
+            </div>
+        </div>
+    </main>
+
+<footer class="bg-gray-800 text-gray-300 py-8 mt-12">
+    <div class="container mx-auto px-6 text-center">
+        <p>&copy; <span id="year"></span> 我的作品集网站. 保留所有权利.</p>
+    </div>
+</footer>
+
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

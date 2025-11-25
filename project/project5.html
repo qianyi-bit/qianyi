@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目详情 - AI 聊天机器人</title>
+    <!-- 加载 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- 简易导航栏 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">项目详情</h1>
+            <a href="/index.html?page=portfolio" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">&larr; 返回作品集</a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+            <img src="https://placehold.co/600x400/9b59b6/ffffff?text=AI机器人" alt="AI机器人" class="w-full h-auto object-cover max-h-96">
+            <div class="p-8 md:p-12">
+                <p class="text-blue-600 font-semibold mb-2">AI/ML Integration</p>
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-6">项目五：AI 聊天机器人</h2>
+                
+                <!-- 详细内容（五段） -->
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>这个项目是为一家中型企业设计的智能客服解决方案，旨在自动化处理常见的客户查询和支持请求。</p>
+                    <p>核心技术是与 OpenAI 的大型语言模型 API 集成，利用其强大的自然语言理解能力来解析用户意图并提供准确、上下文相关的回复。</p>
+                    <p>我们建立了一个知识库管理系统，允许管理员上传和更新常见问题解答 (FAQ) 和产品文档，机器人可以基于这些内部知识进行回答。</p>
+                    <p>前端界面使用了现代的 WebSocket 技术实现实时聊天功能，为用户提供了流畅、无延迟的通信体验。</p>
+                    <p>此外，系统还包括一个“人工干预”机制，当机器人无法解决复杂问题时，可以将对话无缝转移给人工客服，确保服务质量。</p>
+                </div>
+
+                <!-- --- 新增内容开始 --- -->
+                
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">技术栈详情</h3>
+                <ul class="list-disc list-inside space-y-2 text-lg text-gray-700 leading-relaxed">
+                    <li><span class="font-semibold">核心模型:</span> OpenAI GPT-4 API (或同等大型语言模型)</li>
+                    <li><span class="font-semibold">后端:</span> Node.js (用于 WebSocket 实时通信) / PHP (用于业务逻辑)</li>
+                    <li><span class="font-semibold">前端:</span> React.js (用于构建动态聊天界面)</li>
+                    <li><span class="font-semibold">数据库:</span> MySQL / PostgreSQL (用于存储知识库和对话日志)</li>
+                    <li><span class="font-semibold">缓存/会话:</span> Redis (用于管理聊天会话状态和上下文)</li>
+                </ul>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">项目挑战与解决方案</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p><strong class="text-gray-900">挑战:</strong> 最大的挑战是如何在保持对话连贯性的同时，确保 AI 的回答严格限制在预设的知识库范围内，避免“AI幻觉”或提供无关信息。</p>
+                    <p><strong class="text-gray-900">解决方案:</strong> 我们实施了检索增强生成 (RAG) 架构。当用户提问时，系统首先从我们的 MySQL 知识库中检索最相关的文档片段，然后将这些片段作为上下文注入到发送给 OpenAI API 的提示词 (Prompt) 中。这极大地提高了回答的准确性，并将机器人的响应“锚定”在我们的业务数据上。</p>
+                </div>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">成果与反思</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>项目上线后，效果显著：自动化处理了超过 60% 的一级客户咨询，使得人工客服团队能更专注于解决复杂问题。客户的平均等待时间缩短了 70%。这个项目让我深刻体会到，AI 的价值不仅在于技术本身，更在于如何将其与具体的业务流程和数据相结合。</p>
+                </div>
+                <!-- --- 新增内容结束 --- -->
+            </div>
+        </div>
+    </main>
+
+<footer class="bg-gray-800 text-gray-300 py-8 mt-12">
+    <div class="container mx-auto px-6 text-center">
+        <p>&copy; <span id="year"></span> 我的作品集网站. 保留所有权利.</p>
+    </div>
+</footer>
+
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

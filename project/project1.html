@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目详情 - 电商网站</title>
+    <!-- 加载 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- 简易导航栏 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">项目详情</h1>
+            <a href="/index.html?page=portfolio" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">&larr; 返回作品集</a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-6 py-12">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+            <img src="https://placehold.co/600x400/3498db/ffffff?text=电商平台" alt="电商平台" class="w-full h-auto object-cover max-h-96">
+            <div class="p-8 md:p-12">
+                <p class="text-blue-600 font-semibold mb-2">Web Development</p>
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-6">项目一：电商网站</h2>
+                
+                <!-- 详细内容（五段） -->
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>此项目旨在创建一个高可用、高扩展性的 B2C 电商解决方案。核心架构基于流行的 Laravel 框架，确保了后端操作的稳定性和安全性。</p>
+                    <p>我们使用了 Vue.js 作为前端驱动力，构建了响应式的、动态的用户界面，极大地提升了用户购物体验。界面设计遵循最新的 Material Design 规范，注重移动端体验。</p>
+                    <p>关键功能包括：完整的购物车系统、多级商品分类、用户认证与授权、以及强大的后台管理面板用于库存和订单管理。我们还实现了模糊搜索和推荐系统。</p>
+                    <p>支付模块集成了国内外主流的第三方支付网关（如 Stripe 和支付宝），实现了快速、安全的交易流程，同时支持多种货币结算。</p>
+                    <p>项目部署在 AWS EC2 实例上，利用 RDS 进行数据库管理，并通过负载均衡器确保高并发下的性能稳定。这是我全栈能力的最佳体现。</p>
+                </div>
+                <!-- --- 新增内容开始 --- -->
+                
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">技术栈详情</h3>
+                <ul class="list-disc list-inside space-y-2 text-lg text-gray-700 leading-relaxed">
+                    <li><span class="font-semibold">后端:</span> Laravel (PHP 框架)</li>
+                    <li><span class="font-semibold">前端:</span> Vue.js</li>
+                    <li><span class="font-semibold">数据库:</span> MySQL</li>
+                    <li><span class="font-semibold">部署:</span> AWS EC2 + RDS</li>
+                    <li><span class="font-semibold">支付集成:</span> Stripe / 支付宝</li>
+                </ul>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">项目挑战与解决方案</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p><strong class="text-gray-900">挑战:</strong> 处理高并发订单和库存同步。</p>
+                    <p><strong class="text-gray-900">解决方案:</strong> 使用 Redis 作为缓存层和队列系统，实现分布式锁防止库存超卖。</p>
+                </div>
+
+                <h3 class="text-3xl font-bold text-gray-800 mt-10 mb-4 pt-6 border-t border-gray-200">成果与反思</h3>
+                <div class="space-y-6 text-lg text-gray-700 leading-relaxed">
+                    <p>项目上线后，日活跃用户超过 1000，支持多语言和多货币，转化率提升 20%。这让我学会了全栈开发的平衡艺术。</p>
+                </div>
+                <!-- --- 新增内容结束 --- -->
+
+            </div>
+        </div>
+    </main>
+
+<footer class="bg-gray-800 text-gray-300 py-8 mt-12">
+    <div class="container mx-auto px-6 text-center">
+        <!-- 直接写死当前年份（比如2025） -->
+        <p>&copy; 2025 我的作品集网站. 保留所有权利.</p>
+    </div>
+</footer>
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
