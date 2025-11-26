@@ -1,516 +1,509 @@
-<?php
-session_start();
-
-// 关卡配置：每关的行数、列数、地雷数
-$levels = [
-    1 => ['rows' => 8, 'cols' => 8, 'mines' => 10],   // 第一关
-    2 => ['rows' => 10, 'cols' => 12, 'mines' => 20], // 第二关
-    3 => ['rows' => 12, 'cols' => 16, 'mines' => 35], // 第三关
-    4 => ['rows' => 16, 'cols' => 20, 'mines' => 50], // 第四关
-    5 => ['rows' => 20, 'cols' => 24, 'mines' => 70]  // 第五关
-];
-
-// 获取当前关卡配置
-function getCurrentLevelConfig() {
-    global $levels;
-    $currentLevel = $_SESSION['current_level'] ?? 1;
-    // 确保关卡有效
-    if (!isset($levels[$currentLevel])) {
-        $currentLevel = 1;
-        $_SESSION['current_level'] = 1;
-    }
-    return $levels[$currentLevel];
-}
-
-// 初始化游戏
-function initGame() {
-    $config = getCurrentLevelConfig();
-    $rows = $config['rows'];
-    $cols = $config['cols'];
-    $mines = $config['mines'];
-    
-    // 初始化棋盘
-    $board = array_fill(0, $rows, array_fill(0, $cols, 0));
-    $revealed = array_fill(0, $rows, array_fill(0, $cols, false));
-    $flags = array_fill(0, $rows, array_fill(0, $cols, false));
-    
-    // 随机放置地雷
-    $minesPlaced = 0;
-    while ($minesPlaced < $mines) {
-        $x = rand(0, $rows - 1);
-        $y = rand(0, $cols - 1);
-        
-        if ($board[$x][$y] != -1) { // 不是地雷
-            $board[$x][$y] = -1; // 标记为地雷
-            $minesPlaced++;
-            
-            // 更新周围格子的数字
-            for ($dx = -1; $dx <= 1; $dx++) {
-                for ($dy = -1; $dy <= 1; $dy++) {
-                    $nx = $x + $dx;
-                    $ny = $y + $dy;
-                    
-                    if ($nx >= 0 && $nx < $rows && $ny >= 0 && $ny < $cols && $board[$nx][$ny] != -1) {
-                        $board[$nx][$ny]++;
-                    }
-                }
-            }
-        }
-    }
-    
-    return [
-        'board' => $board,
-        'revealed' => $revealed,
-        'flags' => $flags,
-        'gameOver' => false,
-        'win' => false,
-        'rows' => $rows,
-        'cols' => $cols,
-        'mines' => $mines
-    ];
-}
-
-// 递归翻开空白格子
-function revealCell($x, $y) {
-    $config = getCurrentLevelConfig();
-    $rows = $config['rows'];
-    $cols = $config['cols'];
-    
-    // 如果已经翻开或超出边界，返回
-    if ($x < 0 || $x >= $rows || $y < 0 || $y >= $cols || $_SESSION['game']['revealed'][$x][$y]) {
-        return;
-    }
-    
-    // 翻开当前格子
-    $_SESSION['game']['revealed'][$x][$y] = true;
-    
-    // 如果是空白格子，递归翻开周围格子
-    if ($_SESSION['game']['board'][$x][$y] == 0) {
-        for ($dx = -1; $dx <= 1; $dx++) {
-            for ($dy = -1; $dy <= 1; $dy++) {
-                if ($dx != 0 || $dy != 0) {
-                    revealCell($x + $dx, $y + $dy);
-                }
-            }
-        }
-    }
-}
-
-// 检查是否胜利
-function checkWin() {
-    $config = getCurrentLevelConfig();
-    $rows = $config['rows'];
-    $cols = $config['cols'];
-    $mines = $config['mines'];
-    
-    $revealedCount = 0;
-    $correctFlags = 0;
-    
-    for ($i = 0; $i < $rows; $i++) {
-        for ($j = 0; $j < $cols; $j++) {
-            if ($_SESSION['game']['revealed'][$i][$j]) {
-                $revealedCount++;
-            }
-            
-            // 检查标记的地雷是否正确
-            if ($_SESSION['game']['flags'][$i][$j] && $_SESSION['game']['board'][$i][$j] == -1) {
-                $correctFlags++;
-            }
-        }
-    }
-    
-    // 胜利条件：所有非地雷格子都被翻开，或者所有地雷都被正确标记
-    $totalCells = $rows * $cols;
-    if ($revealedCount == $totalCells - $mines || $correctFlags == $mines) {
-        $_SESSION['game']['gameOver'] = true;
-        $_SESSION['game']['win'] = true;
-        // 显示所有地雷
-        for ($i = 0; $i < $rows; $i++) {
-            for ($j = 0; $j < $cols; $j++) {
-                if ($_SESSION['game']['board'][$i][$j] == -1) {
-                    $_SESSION['game']['flags'][$i][$j] = true;
-                }
-            }
-        }
-    }
-}
-
-// 处理游戏操作
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-    
-    switch ($action) {
-        case 'reveal':
-        case 'flag':
-            if (!isset($_SESSION['game'])) {
-                $_SESSION['game'] = initGame();
-            }
-            
-            $x = intval($_POST['x'] ?? 0);
-            $y = intval($_POST['y'] ?? 0);
-            $config = getCurrentLevelConfig();
-            
-            // 检查坐标是否有效
-            if ($x < 0 || $x >= $config['rows'] || $y < 0 || $y >= $config['cols']) {
-                header('Location: ' . $_SERVER['PHP_SELF']);
-                exit;
-            }
-            
-            // 如果已经游戏结束或已经翻开，不做处理
-            if ($_SESSION['game']['gameOver'] || ($action == 'reveal' && $_SESSION['game']['revealed'][$x][$y])) {
-                break;
-            }
-            
-            if ($action == 'reveal') {
-                // 如果点击了地雷，游戏结束
-                if ($_SESSION['game']['board'][$x][$y] == -1) {
-                    $_SESSION['game']['gameOver'] = true;
-                    $_SESSION['game']['win'] = false;
-                    // 显示所有地雷
-                    for ($i = 0; $i < $config['rows']; $i++) {
-                        for ($j = 0; $j < $config['cols']; $j++) {
-                            if ($_SESSION['game']['board'][$i][$j] == -1) {
-                                $_SESSION['game']['revealed'][$i][$j] = true;
-                            }
-                        }
-                    }
-                    break;
-                }
-                
-                // 翻开格子
-                revealCell($x, $y);
-                
-                // 检查是否胜利
-                checkWin();
-            } elseif ($action == 'flag') {
-                if (!$_SESSION['game']['revealed'][$x][$y]) {
-                    $_SESSION['game']['flags'][$x][$y] = !$_SESSION['game']['flags'][$x][$y];
-                    checkWin();
-                }
-            }
-            break;
-            
-        case 'reset':
-            unset($_SESSION['game']);
-            break;
-            
-        case 'next_level':
-            // 进入下一关
-            $currentLevel = $_SESSION['current_level'] ?? 1;
-            global $levels;
-            if (isset($levels[$currentLevel + 1])) {
-                $_SESSION['current_level'] = $currentLevel + 1;
-            }
-            unset($_SESSION['game']);
-            break;
-            
-        case 'restart_level':
-            // 重玩当前关
-            unset($_SESSION['game']);
-            break;
-    }
-    
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit;
-}
-
-// 初始化游戏（如果尚未初始化）
-if (!isset($_SESSION['game'])) {
-    $_SESSION['game'] = initGame();
-}
-
-// 获取当前关卡信息
-$currentLevel = $_SESSION['current_level'] ?? 1;
-$config = getCurrentLevelConfig();
-$totalLevels = count($levels);
-?>
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>关卡式扫雷游戏</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>经典扫雷专业版</title>
     <style>
+        :root {
+            --bg-color: #c0c0c0;
+            --border-light: #fff;
+            --border-dark: #808080;
+            --cell-size: 25px; /* 默认格子大小 */
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f0f0;
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #008080; /* 经典青色背景 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            user-select: none;
         }
-        
-        .game-header {
-            margin-bottom: 20px;
+
+        /* 游戏主窗口 */
+        .window {
+            background: var(--bg-color);
+            padding: 6px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            border: 2px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
         }
-        
-        .level-info {
-            font-size: 1.2em;
-            margin: 10px 0;
-            color: #333;
-        }
-        
-        .game-container {
-            display: inline-block;
-            margin: 0 auto;
-            padding: 10px;
-            background-color: #c0c0c0;
-            border: 2px solid #7b7b7b;
-            overflow: auto;
-            max-width: 95%;
-        }
-        
-        .info {
-            margin-bottom: 10px;
-            padding: 8px;
-            background-color: #e0e0e0;
-            border: 1px solid #999;
-            font-weight: bold;
+
+        /* 顶部控制栏 */
+        .header {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            border: 2px solid #808080;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+            padding: 6px;
+            margin-bottom: 6px;
+            background: #c0c0c0;
         }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(<?php echo $config['cols']; ?>, 30px);
-            gap: 2px;
-            margin: 0 auto;
+
+        /* LCD 数字显示屏 */
+        .lcd-display {
+            background: #000;
+            color: #ff0000;
+            font-family: 'Courier New', monospace; /* 模拟LCD */
+            font-size: 24px;
+            font-weight: bold;
+            padding: 2px 4px;
+            border: 2px solid #808080;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+            width: 50px;
+            text-align: right;
+            letter-spacing: 2px;
         }
-        
-        .cell {
-            width: 30px;
-            height: 30px;
-            background-color: #c0c0c0;
-            border-top: 2px solid white;
-            border-left: 2px solid white;
-            border-right: 2px solid #7b7b7b;
-            border-bottom: 2px solid #7b7b7b;
+
+        /* 那个黄脸按钮 */
+        .face-btn {
+            width: 36px;
+            height: 36px;
+            font-size: 24px;
+            background: var(--bg-color);
+            border: 2px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            cursor: pointer;
+        }
+        .face-btn:active {
+            border: 2px solid #808080;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+            padding-top: 2px; 
+            padding-left: 2px;
+        }
+
+        /* 难度选择器 */
+        .difficulty-select {
+            margin-bottom: 10px;
+        }
+        select {
+            padding: 5px;
             font-size: 14px;
+            border-radius: 4px;
         }
-        
-        .cell.revealed {
-            border: 1px solid #999;
-            cursor: default;
+
+        /* 雷区网格 */
+        #grid {
+            display: grid;
+            border: 3px solid #808080;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+            background: #808080; /* 格子间隙颜色 */
+            gap: 0px; 
         }
-        
-        .cell.flagged::after {
-            content: "⚐";
-        }
-        
-        .cell.mine {
-            background-color: #ff6666;
-        }
-        
-        .cell.mine::after {
-            content: "💣";
-        }
-        
-        .cell.number-1 { color: blue; }
-        .cell.number-2 { color: green; }
-        .cell.number-3 { color: red; }
-        .cell.number-4 { color: purple; }
-        .cell.number-5 { color: maroon; }
-        .cell.number-6 { color: teal; }
-        .cell.number-7 { color: black; }
-        .cell.number-8 { color: gray; }
-        
-        .controls {
-            margin-top: 15px;
+
+        .cell {
+            width: var(--cell-size);
+            height: var(--cell-size);
+            background-color: var(--bg-color);
+            border: 2px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
             display: flex;
+            align-items: center;
             justify-content: center;
+            font-weight: 900;
+            font-size: 16px; /* 数字大小 */
+            cursor: default;
+            box-sizing: border-box;
+        }
+
+        .cell:active:not(.open) {
+            border: none;
+            padding: 2px; /* 模拟按下 */
+            background-color: #bdbdbd;
+        }
+
+        .cell.open {
+            border: 1px solid #7b7b7b; /* 翻开后的微弱边框 */
+            background-color: #d1d1d1;
+        }
+
+        .cell.bomb { background-color: #ff4d4d; border: 1px solid #7b7b7b; }
+        .cell.flag { color: red; }
+        
+        /* 数字颜色 */
+        .c1 { color: blue; }
+        .c2 { color: green; }
+        .c3 { color: red; }
+        .c4 { color: darkblue; }
+        .c5 { color: maroon; }
+        .c6 { color: teal; }
+        .c7 { color: black; }
+        .c8 { color: gray; }
+
+        /* 移动端控制条 */
+        .mobile-controls {
+            display: none; /* 默认桌面端隐藏 */
+            margin-top: 15px;
             gap: 10px;
         }
         
-        button {
-            padding: 8px 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
+        .mode-btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 20px;
+            border: 2px solid #fff;
+            background: #eee;
             cursor: pointer;
-            font-size: 16px;
-        }
-        
-        button:hover {
-            background-color: #45a049;
-        }
-        
-        button.secondary {
-            background-color: #2196F3;
-        }
-        
-        button.secondary:hover {
-            background-color: #0b7dda;
-        }
-        
-        .message {
-            margin-top: 15px;
-            font-size: 1.2em;
+            width: 120px;
+            text-align: center;
             font-weight: bold;
-            padding: 10px;
-            border-radius: 4px;
         }
-        
-        .win { 
-            color: green; 
-            background-color: #dff0d8;
+        .mode-btn.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #2E7D32;
         }
-        
-        .lose { 
-            color: red; 
-            background-color: #f2dede;
-        }
-        
-        .level-progress {
-            margin: 10px 0;
-            padding: 5px;
-        }
-        
-        .progress-bar {
-            height: 10px;
-            background-color: #eee;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 5px;
-        }
-        
-        .progress {
-            height: 100%;
-            background-color: #4CAF50;
-            width: <?php echo ($currentLevel / $totalLevels) * 100; ?>%;
+
+        /* 响应式适配 */
+        @media (max-width: 600px) {
+            .mobile-controls { display: flex; }
+            :root { --cell-size: 32px; } /* 手机端格子大一点 */
+            body { padding-top: 20px; justify-content: flex-start; }
+            .window { transform: scale(0.95); }
         }
     </style>
 </head>
 <body>
-    <div class="game-header">
-        <h1>关卡式扫雷游戏</h1>
-        <div class="level-info">
-            当前关卡: <?php echo $currentLevel; ?>/<?php echo $totalLevels; ?>
-            (棋盘: <?php echo $config['rows']; ?>×<?php echo $config['cols']; ?>, 地雷: <?php echo $config['mines']; ?>个)
-        </div>
-        <div class="level-progress">
-            <div class="progress-bar">
-                <div class="progress"></div>
-            </div>
-        </div>
+
+    <div class="difficulty-select">
+        <select id="level-select" onchange="changeLevel()">
+            <option value="easy">初级 (9x9, 10雷)</option>
+            <option value="medium">中级 (16x16, 40雷)</option>
+            <option value="hard">高级 (30x16, 99雷)</option>
+        </select>
     </div>
-    
-    <div class="game-container">
-        <div class="info">
-            <div>剩余地雷: <?php echo $config['mines'] - count(array_filter(array_merge(...$_SESSION['game']['flags']))); ?></div>
-            <div>已翻开: <?php echo count(array_filter(array_merge(...$_SESSION['game']['revealed']))); ?>/<?php echo $config['rows'] * $config['cols'] - $config['mines']; ?></div>
+
+    <div class="window">
+        <div class="header">
+            <div class="lcd-display" id="mine-display">010</div>
+            <div class="face-btn" id="face-btn" onclick="resetGame()">🙂</div>
+            <div class="lcd-display" id="time-display">000</div>
         </div>
-        
-        <div class="grid">
-            <?php for ($i = 0; $i < $config['rows']; $i++): ?>
-                <?php for ($j = 0; $j < $config['cols']; $j++): ?>
-                    <?php
-                    $cellClass = 'cell';
-                    $content = '';
-                    
-                    if ($_SESSION['game']['revealed'][$i][$j]) {
-                        $cellClass .= ' revealed';
-                        if ($_SESSION['game']['board'][$i][$j] == -1) {
-                            $cellClass .= ' mine';
-                        } elseif ($_SESSION['game']['board'][$i][$j] > 0) {
-                            $cellClass .= ' number-' . $_SESSION['game']['board'][$i][$j];
-                            $content = $_SESSION['game']['board'][$i][$j];
-                        }
-                    } elseif ($_SESSION['game']['flags'][$i][$j]) {
-                        $cellClass .= ' flagged';
-                    }
-                    ?>
-                    
-                    <div 
-                        class="<?php echo $cellClass; ?>"
-                        data-x="<?php echo $i; ?>"
-                        data-y="<?php echo $j; ?>"
-                    >
-                        <?php echo $content; ?>
-                    </div>
-                <?php endfor; ?>
-            <?php endfor; ?>
-        </div>
-        
-        <?php if ($_SESSION['game']['gameOver']): ?>
-            <div class="message <?php echo $_SESSION['game']['win'] ? 'win' : 'lose'; ?>">
-                <?php 
-                if ($_SESSION['game']['win']) {
-                    if ($currentLevel == $totalLevels) {
-                        echo "恭喜你通关所有关卡！太棒了！";
-                    } else {
-                        echo "恭喜你通过第{$currentLevel}关！准备好挑战下一关了吗？";
-                    }
-                } else {
-                    echo "很遗憾，踩到地雷了！再试一次吧！";
-                }
-                ?>
-            </div>
-        <?php endif; ?>
-        
-        <div class="controls">
-            <?php if ($_SESSION['game']['gameOver']): ?>
-                <?php if ($_SESSION['game']['win'] && $currentLevel < $totalLevels): ?>
-                    <form method="post" style="display: inline;">
-                        <button type="submit" name="action" value="next_level">下一关</button>
-                    </form>
-                <?php endif; ?>
-                <form method="post" style="display: inline;">
-                    <button type="submit" name="action" value="restart_level" class="secondary">重玩本关</button>
-                </form>
-            <?php else: ?>
-                <form method="post" style="display: inline;">
-                    <button type="submit" name="action" value="reset">重新开始</button>
-                </form>
-            <?php endif; ?>
-        </div>
+        <div id="grid"></div>
+    </div>
+
+    <div class="mobile-controls">
+        <div class="mode-btn active" id="btn-dig" onclick="setMode('dig')">⛏️ 挖掘</div>
+        <div class="mode-btn" id="btn-flag" onclick="setMode('flag')">🚩 插旗</div>
     </div>
 
     <script>
-        // 为每个格子添加点击事件
-        document.querySelectorAll('.cell').forEach(cell => {
-            // 左键点击翻开格子
-            cell.addEventListener('click', function() {
-                <?php if (!$_SESSION['game']['gameOver']): ?>
-                    const x = this.getAttribute('data-x');
-                    const y = this.getAttribute('data-y');
-                    
-                    // 创建表单并提交
-                    const form = document.createElement('form');
-                    form.method = 'post';
-                    form.innerHTML = `
-                        <input type="hidden" name="action" value="reveal">
-                        <input type="hidden" name="x" value="${x}">
-                        <input type="hidden" name="y" value="${y}">
-                    `;
-                    document.body.appendChild(form);
-                    form.submit();
-                <?php endif; ?>
-            });
+        // 配置参数
+        const LEVELS = {
+            easy: { rows: 9, cols: 9, mines: 10 },
+            medium: { rows: 16, cols: 16, mines: 40 },
+            hard: { rows: 16, cols: 30, mines: 99 } // 经典高级是 16行 30列
+        };
+
+        let CONFIG = LEVELS.easy;
+        let grid = [];
+        let gameState = 'idle'; // idle, playing, lost, won
+        let flagsUsed = 0;
+        let timer = 0;
+        let timerInterval;
+        let firstClick = true; // 用于首发保护
+        let currentMode = 'dig'; // dig 或 flag (移动端用)
+
+        // DOM 元素
+        const gridEl = document.getElementById('grid');
+        const mineDisplay = document.getElementById('mine-display');
+        const timeDisplay = document.getElementById('time-display');
+        const faceBtn = document.getElementById('face-btn');
+        const btnDig = document.getElementById('btn-dig');
+        const btnFlag = document.getElementById('btn-flag');
+
+        function changeLevel() {
+            const val = document.getElementById('level-select').value;
+            CONFIG = LEVELS[val];
+            resetGame();
+        }
+
+        function resetGame() {
+            clearInterval(timerInterval);
+            gameState = 'idle';
+            flagsUsed = 0;
+            timer = 0;
+            firstClick = true;
+            grid = [];
             
-            // 右键点击标记地雷
-            cell.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                <?php if (!$_SESSION['game']['gameOver']): ?>
-                    const x = this.getAttribute('data-x');
-                    const y = this.getAttribute('data-y');
+            // 更新 UI
+            faceBtn.innerText = '🙂';
+            mineDisplay.innerText = formatNumber(CONFIG.mines);
+            timeDisplay.innerText = '000';
+            
+            // 设置 Grid 样式
+            gridEl.style.gridTemplateRows = `repeat(${CONFIG.rows}, var(--cell-size))`;
+            gridEl.style.gridTemplateColumns = `repeat(${CONFIG.cols}, var(--cell-size))`;
+            gridEl.innerHTML = '';
+
+            // 生成空网格
+            for (let r = 0; r < CONFIG.rows; r++) {
+                let row = [];
+                for (let c = 0; c < CONFIG.cols; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.r = r;
+                    cell.dataset.c = c;
                     
-                    // 创建表单并提交
-                    const form = document.createElement('form');
-                    form.method = 'post';
-                    form.innerHTML = `
-                        <input type="hidden" name="action" value="flag">
-                        <input type="hidden" name="x" value="${x}">
-                        <input type="hidden" name="y" value="${y}">
-                    `;
-                    document.body.appendChild(form);
-                    form.submit();
-                <?php endif; ?>
-            });
-        });
+                    // 绑定事件
+                    cell.addEventListener('mousedown', (e) => handleMouseDown(e, r, c));
+                    cell.addEventListener('mouseup', (e) => handleMouseUp(e, r, c));
+                    // 禁用右键默认菜单
+                    cell.addEventListener('contextmenu', (e) => e.preventDefault());
+
+                    gridEl.appendChild(cell);
+                    row.push({
+                        el: cell,
+                        isMine: false,
+                        isOpen: false,
+                        isFlagged: false,
+                        nearby: 0
+                    });
+                }
+                grid.push(row);
+            }
+        }
+
+        // 处理鼠标按下（为了做笑脸惊讶效果）
+        function handleMouseDown(e, r, c) {
+            if (gameState === 'lost' || gameState === 'won') return;
+            if (e.button === 0) faceBtn.innerText = '😮';
+        }
+
+        // 处理鼠标抬起（核心逻辑）
+        function handleMouseUp(e, r, c) {
+            faceBtn.innerText = '🙂';
+            if (gameState === 'lost' || gameState === 'won') return;
+
+            const cell = grid[r][c];
+
+            // 区分左右键和移动端模式
+            let isLeftClick = e.button === 0;
+            let isRightClick = e.button === 2;
+
+            if (currentMode === 'flag' && isLeftClick) {
+                // 移动端插旗模式下，左键当作右键用
+                isRightClick = true;
+                isLeftClick = false;
+            }
+
+            if (isRightClick) {
+                toggleFlag(r, c);
+            } else if (isLeftClick) {
+                if (cell.isOpen) {
+                    // 🌟 高级功能：点击已翻开的数字进行“快速扫雷”(Chording)
+                    chordReveal(r, c);
+                } else {
+                    clickCell(r, c);
+                }
+            }
+        }
+
+        function clickCell(r, c) {
+            const cell = grid[r][c];
+            if (cell.isFlagged || cell.isOpen) return;
+
+            // 🌟 首发保护：如果是第一次点击，生成雷，并保证当前位置不含雷
+            if (firstClick) {
+                firstClick = false;
+                startTimer();
+                placeMines(r, c); // 传入避雷坐标
+            }
+
+            if (cell.isMine) {
+                gameOver(false, r, c);
+            } else {
+                reveal(r, c);
+                checkWin();
+            }
+        }
+
+        function toggleFlag(r, c) {
+            const cell = grid[r][c];
+            if (cell.isOpen) return;
+
+            cell.isFlagged = !cell.isFlagged;
+            cell.el.classList.toggle('flag');
+            cell.el.innerText = cell.isFlagged ? '🚩' : '';
+            
+            flagsUsed += cell.isFlagged ? 1 : -1;
+            mineDisplay.innerText = formatNumber(CONFIG.mines - flagsUsed);
+        }
+
+        // 🌟 核心算法：生成地雷（避开 firstR, firstC）
+        function placeMines(excludeR, excludeC) {
+            let minesPlaced = 0;
+            while (minesPlaced < CONFIG.mines) {
+                const r = Math.floor(Math.random() * CONFIG.rows);
+                const c = Math.floor(Math.random() * CONFIG.cols);
+
+                // 规则：当前格不放雷，且周围8格也不放雷（为了开局能开出一片空地，体验更好）
+                if (Math.abs(r - excludeR) <= 1 && Math.abs(c - excludeC) <= 1) continue;
+
+                if (!grid[r][c].isMine) {
+                    grid[r][c].isMine = true;
+                    minesPlaced++;
+                }
+            }
+
+            // 计算所有格子的数字
+            for (let r = 0; r < CONFIG.rows; r++) {
+                for (let c = 0; c < CONFIG.cols; c++) {
+                    if (!grid[r][c].isMine) {
+                        grid[r][c].nearby = countMines(r, c);
+                    }
+                }
+            }
+        }
+
+        function countMines(r, c) {
+            let count = 0;
+            for (let i = r - 1; i <= r + 1; i++) {
+                for (let j = c - 1; j <= c + 1; j++) {
+                    if (i >= 0 && i < CONFIG.rows && j >= 0 && j < CONFIG.cols) {
+                        if (grid[i][j].isMine) count++;
+                    }
+                }
+            }
+            return count;
+        }
+
+        // 递归翻开
+        function reveal(r, c) {
+            if (r < 0 || r >= CONFIG.rows || c < 0 || c >= CONFIG.cols) return;
+            const cell = grid[r][c];
+            if (cell.isOpen || cell.isFlagged) return;
+
+            cell.isOpen = true;
+            cell.el.classList.add('open');
+
+            if (cell.nearby > 0) {
+                cell.el.innerText = cell.nearby;
+                cell.el.classList.add('c' + cell.nearby);
+            } else {
+                // 如果是空白（0），递归翻开周围
+                for (let i = r - 1; i <= r + 1; i++) {
+                    for (let j = c - 1; j <= c + 1; j++) {
+                        reveal(i, j);
+                    }
+                }
+            }
+        }
+
+        // 🌟 高级功能：双击开雷（Chording）
+        // 如果数字是 2，且周围已经插了 2 个旗子，点击数字会自动翻开剩下的
+        function chordReveal(r, c) {
+            const cell = grid[r][c];
+            if (cell.nearby === 0) return;
+
+            // 计算周围旗子数
+            let flagCount = 0;
+            for (let i = r - 1; i <= r + 1; i++) {
+                for (let j = c - 1; j <= c + 1; j++) {
+                    if (i >= 0 && i < CONFIG.rows && j >= 0 && j < CONFIG.cols) {
+                        if (grid[i][j].isFlagged) flagCount++;
+                    }
+                }
+            }
+
+            // 如果旗子数等于数字，翻开周围非旗子格子
+            if (flagCount === cell.nearby) {
+                for (let i = r - 1; i <= r + 1; i++) {
+                    for (let j = c - 1; j <= c + 1; j++) {
+                        if (i >= 0 && i < CONFIG.rows && j >= 0 && j < CONFIG.cols) {
+                            if (!grid[i][j].isOpen && !grid[i][j].isFlagged) {
+                                // 这里要小心，如果旗子插错了，会引爆
+                                clickCell(i, j); 
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function gameOver(win, r, c) {
+            clearInterval(timerInterval);
+            gameState = win ? 'won' : 'lost';
+            faceBtn.innerText = win ? '😎' : '😵';
+
+            if (!win) {
+                // 踩雷了：显示所有雷，并在踩到的雷上标记
+                grid[r][c].el.style.backgroundColor = 'red';
+                for (let row of grid) {
+                    for (let cell of row) {
+                        if (cell.isMine) {
+                            cell.el.innerText = '💣';
+                            if (!cell.isFlagged) cell.el.classList.add('open'); // 没插旗的雷显示出来
+                        } else if (cell.isFlagged) {
+                            // 插错旗了
+                            cell.el.innerText = '❌'; 
+                        }
+                    }
+                }
+                alert('💥 BOOM! 游戏结束');
+            } else {
+                alert(`🎉 恭喜! 用时 ${timer} 秒`);
+            }
+        }
+
+        function checkWin() {
+            let revealed = 0;
+            for (let row of grid) {
+                for (let cell of row) {
+                    if (cell.isOpen) revealed++;
+                }
+            }
+            if (revealed === (CONFIG.rows * CONFIG.cols - CONFIG.mines)) {
+                gameOver(true);
+            }
+        }
+
+        // 计时器
+        function startTimer() {
+            gameState = 'playing';
+            timer = 0;
+            timerInterval = setInterval(() => {
+                timer++;
+                timeDisplay.innerText = formatNumber(timer);
+                if (timer > 999) clearInterval(timerInterval);
+            }, 1000);
+        }
+
+        function formatNumber(num) {
+            if (num < 0) return '000'; // 简单处理负数
+            return num.toString().padStart(3, '0');
+        }
+
+        // 移动端模式切换
+        function setMode(mode) {
+            currentMode = mode;
+            if (mode === 'dig') {
+                btnDig.classList.add('active');
+                btnFlag.classList.remove('active');
+            } else {
+                btnFlag.classList.add('active');
+                btnDig.classList.remove('active');
+            }
+        }
+
+        // 初始化
+        resetGame();
+
     </script>
 </body>
 </html>
