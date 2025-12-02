@@ -1,18 +1,17 @@
 {
-  "builds": [
-    {
-      "src": "api/login.php",
-      "use": "@vercel/php@1.0.0"  // 或 vercel-php@0.7.2（你的版本）
+  "version": 2,
+  "functions": {
+    "api/**/*.php": {
+      "runtime": "@vercel/php@1.0.0"
     }
-    // 如果有更多文件，加一行：{ "src": "api/other.php", "use": "@vercel/php@1.0.0" }
-  ],
+  },
   "routes": [
     {
-      "src": "/admin/login",    // 你的导航链接 URL
-      "dest": "/api/login.php"  // 指向实际 PHP
+      "src": "/admin/(.*)",
+      "dest": "/api/$1"
     },
     {
-      "src": "/(.*)",           // 静态页面 fallback
+      "src": "/(.*)",
       "dest": "/index.html"
     }
   ]
