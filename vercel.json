@@ -1,14 +1,19 @@
 {
-  "functions": {
-    // 匹配 api 目录下所有 PHP 文件
-    "api/admin/*.php": {
-      "runtime": "vercel-php@0.7.0"
-    },
-    // 特定文件单独配置
-    "api/admin.php": {
-      "runtime": "vercel-php@0.7.0",
-      "memory": 2048,          // 分配更多内存
-      "maxDuration": 30        // 延长执行时间
+  "builds": [
+    {
+      "src": "api/login.php",
+      "use": "@vercel/php@1.0.0"  // 或 vercel-php@0.7.2（你的版本）
     }
-  }
+    // 如果有更多文件，加一行：{ "src": "api/other.php", "use": "@vercel/php@1.0.0" }
+  ],
+  "routes": [
+    {
+      "src": "/admin/login",    // 你的导航链接 URL
+      "dest": "/api/login.php"  // 指向实际 PHP
+    },
+    {
+      "src": "/(.*)",           // 静态页面 fallback
+      "dest": "/index.html"
+    }
+  ]
 }
