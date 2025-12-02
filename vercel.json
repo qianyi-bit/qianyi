@@ -5,7 +5,7 @@
       "src": "api/login.php",
       "use": "@vercel/php@1.0.0"
     }
-    // 加更多 PHP：复制上方块，改 src 为 "api/other.php"
+    // 如果有更多 PHP（如 dashboard.php），加一行：{ "src": "api/dashboard.php", "use": "@vercel/php@1.0.0" }
   ],
   "routes": [
     {
@@ -13,18 +13,18 @@
       "dest": "/api/login.php"
     },
     {
-      "src": "/admin/(.*)",  // 支持子路由，如 /admin/dashboard
-      "dest": "/api/$1.php"
+      "src": "/admin/(.*)",
+      "dest": "/api/$1.php"  // 支持子路由，如 /admin/dashboard → api/dashboard.php
     },
     {
-      "src": "/(.*)",        // 静态 fallback
-      "dest": "/index.html"
+      "src": "/(.*)",
+      "dest": "/index.html"  // 静态页面 fallback
     }
   ],
   "functions": {
     "api/**/*.php": {
       "runtime": "@vercel/php@1.0.0",
-      "maxDuration": 10
+      "maxDuration": 10  // 免费版 10s 超时
     }
   }
 }
