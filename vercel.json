@@ -1,18 +1,30 @@
 {
   "version": 2,
-  "functions": {
-    "api/**/*.php": {
-      "runtime": "@vercel/php@1.0.0"
+  "builds": [
+    {
+      "src": "api/login.php",
+      "use": "@vercel/php@1.0.0"
     }
-  },
+    // 加更多 PHP：复制上方块，改 src 为 "api/other.php"
+  ],
   "routes": [
     {
-      "src": "/admin/(.*)",
-      "dest": "/api/$1"
+      "src": "/admin/login",
+      "dest": "/api/login.php"
     },
     {
-      "src": "/(.*)",
+      "src": "/admin/(.*)",  // 支持子路由，如 /admin/dashboard
+      "dest": "/api/$1.php"
+    },
+    {
+      "src": "/(.*)",        // 静态 fallback
       "dest": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/**/*.php": {
+      "runtime": "@vercel/php@1.0.0",
+      "maxDuration": 10
+    }
+  }
 }
