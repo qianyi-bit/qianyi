@@ -1,17 +1,10 @@
+// vercel.json（最新最稳版）
 {
-  "functions": {
-    "api/*.php": {
-      "runtime": "vercel-php@0.6.1"
-    }
-  },
+  "builds": [
+    { "src": "api/**/*.php", "use": "vercel-php@0.6.1" }
+  ],
   "routes": [
-    {
-      "src": "/admin/login",
-      "dest": "/api/login.php"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "src": "/admin/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
