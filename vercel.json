@@ -1,17 +1,14 @@
 {
   "functions": {
-    "api/**/*.php": {  // **/ 支持子目录，如 api/admin/*.php
-      "runtime": "@vercel/php@1.0.0"
-    }
-  },
-  "routes": [
-    {
-      "src": "/admin/(.*)",     // 捕获 /admin/xxx
-      "dest": "/api/$1"         // 动态路由到 api/xxx
+    // 匹配 api 目录下所有 PHP 文件
+    "api/admin/*.php": {
+      "runtime": "vercel-php@0.7.0"
     },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+    // 特定文件单独配置
+    "api/admin.php": {
+      "runtime": "vercel-php@0.7.0",
+      "memory": 2048,          // 分配更多内存
+      "maxDuration": 30        // 延长执行时间
     }
-  ]
+  }
 }
