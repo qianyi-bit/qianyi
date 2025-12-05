@@ -8,11 +8,6 @@
     }
   },
   "routes": [
-    { "src": "/favicon.ico",       "dest": "/favicon.ico" },
-    { "src": "/freeaday.jpg",      "dest": "/freeaday.jpg" },
-    { "src": "/freeaday.png",      "dest": "/freeaday.png" },
-    { "src": "/freeaday.gif",      "dest": "/freeaday.gif" },
-    
     { "src": "/(.*)",              "dest": "/api/index.php" }
   ],
   "rewrites": [
