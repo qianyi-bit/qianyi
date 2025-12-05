@@ -2,15 +2,20 @@
   "version": 2,
   "functions": {
     "api/**/*.php": {
-      "runtime": "vercel-php@0.7.3"
+      "runtime": "vercel-php@0.7.4",
+      "memory": 2048,
+      "maxDuration": 30
     }
   },
   "routes": [
-    { "src": "/favicon.ico", "dest": "/favicon.ico" },
-    { "src": "/freeaday.jpg", "dest": "/freeaday.jpg" },
-    { "src": "/freeaday.png", "dest": "/freeaday.png" },
-    { "src": "/freeaday.gif", "dest": "/freeaday.gif" },
-    { "src": "/(.*)",  "dest": "/api/index.php" }
+    { "src": "/favicon.ico",       "dest": "/favicon.ico" },
+    { "src": "/freeaday.jpg",      "dest": "/freeaday.jpg" },
+    { "src": "/freeaday.png",      "dest": "/freeaday.png" },
+    { "src": "/freeaday.gif",      "dest": "/freeaday.gif" },
+    
+    { "src": "/(.*)",              "dest": "/api/index.php" }
+  ],
+  "rewrites": [
+    { "source": "/(.*)",           "destination": "/api/index.php" }
   ]
- 
 }
