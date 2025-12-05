@@ -1,4 +1,13 @@
 {
+  "version": 2,
+  "functions": {
+    "api/*.php": {
+      "runtime": "vercel-php@0.7.4"
+    },
+    "api/game/*.php": {
+      "runtime": "vercel-php@0.7.4"
+    }
+  },
   "routes": [
     {
       "src": "/api/(.*)",
@@ -6,23 +15,21 @@
     },
     {
       "src": "/game/(.*)",
-      "dest": "/game/$1"
+      "dest": "/api/game/$1"
     },
     {
-      "src": "/(.*\\.(php|html|css|js|png|jpg|jpeg|gif|svg|ico|json|xml|txt|pdf))",
-      "dest": "/$1"
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.php"
+      "dest": "/api/index.php"
     }
   ],
-  "functions": {
-    "api/*.php": {
-      "runtime": "php@8.2"
-    },
-    "*.php": {
-      "runtime": "php@8.2"
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.php"
     }
-  }
+  ]
 }
