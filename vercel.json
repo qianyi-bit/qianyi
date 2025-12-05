@@ -6,11 +6,5 @@
       "memory": 2048,
       "maxDuration": 30
     }
-  },
-  "routes": [
-    { "src": "/(.*)",              "dest": "/api/index.php" }
-  ],
-  "rewrites": [
-    { "source": "/(.*)",           "destination": "/api/index.php" }
-  ]
+  }
 }
