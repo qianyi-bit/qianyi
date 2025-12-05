@@ -1,5 +1,15 @@
 
 <?php
+// 第一行：输出缓冲，防止隐式头
+ob_start();
+
+// 第二行：session_start，必须在此之前无任何输出
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 第三行：引入 DB（稍后修复）
+require_once 'db_config.php';
 session_start();
 require_once 'db_config.php'; // 引入数据库配置
 
