@@ -1,0 +1,28 @@
+{
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/game/(.*)",
+      "dest": "/game/$1"
+    },
+    {
+      "src": "/(.*\\.(php|html|css|js|png|jpg|jpeg|gif|svg|ico|json|xml|txt|pdf))",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.php"
+    }
+  ],
+  "functions": {
+    "api/*.php": {
+      "runtime": "php@8.2"
+    },
+    "*.php": {
+      "runtime": "php@8.2"
+    }
+  }
+}
